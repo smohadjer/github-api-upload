@@ -1,39 +1,42 @@
 document.addEventListener('DOMContentLoaded', () => {
     const form =  document.querySelector('form');
-    form.addEventListener('submit', onSubmit);
+    form!.addEventListener('submit', onSubmit);
 });
 
-async function onSubmit(event) {
+interface Data {
+    owner: string;
+    repo: string;
+    filename: string;
+    token: string;
+    content: string;
+};
+
+async function onSubmit(event: Event) {
     event.preventDefault();
-    const formData = new FormData(event.target);
-    const data = {};
-    let image = null;
 
-    for (let pair of formData.entries()) {
-        data[pair[0]] = pair[1];
-    }
-
-    const srcData = await blobToBase64(formData.get('myfile'));
-    displayThumbnail(srcData);
-    image = {
-        name: formData.get('myfile').name,
-        //type: formData.get('myfile').type,
+    const form = event.target as HTMLFormElement;
+    const formData = new FormData(form);
+    const file = formData.get('myfile') as File;
+    const srcData: string = await blobToBase64(file);
+    const data: Data = {
+        owner: formData.get('owner') as string,
+        repo: formData.get('repo') as string,
+        token: formData.get('token') as string,
+        filename: file.name,
         content: srcData.split('base64,')[1]
     };
 
-    uploadImage({
-        ...data,
-        ...image
-    }).then(res => {
+    displayThumbnail(srcData);
+    uploadImage(data).then(res => {
         const log = res.message ? res.message : `upload success:
             <a href="${res.content.download_url}">${res.content.download_url}</a>`;
-        document.querySelector('.log').innerHTML = log;
+        document.querySelector('.log')!.innerHTML = log;
     })
 }
 
-function uploadImage(data) {
+function uploadImage(data: Data) {
     return fetch(
-        `https://api.github.com/repos/${data.owner}/${data.repo}/contents/${data.name}`,
+        `https://api.github.com/repos/${data.owner}/${data.repo}/contents/${data.filename}`,
         {
             method: "PUT",
             headers: {
@@ -48,17 +51,17 @@ function uploadImage(data) {
     ).then((res) => res.json());
 }
 
-function displayThumbnail(src) {
+function displayThumbnail(src: string) {
     const newImage = document.createElement("img");
     newImage.src = src;
-    document.querySelector('.preview').innerHTML = newImage.outerHTML;
+    document.querySelector('.preview')!.innerHTML = newImage.outerHTML;
 }
 
-function blobToBase64(blob) {
-    return new Promise((resolve) => {
+function blobToBase64(blob: File) {
+    return new Promise<string>((resolve) => {
         const fileReader = new FileReader();
         fileReader.onload = () => {
-            const srcData = fileReader.result;
+            const srcData: string = fileReader.result! as string;
             resolve(srcData);
         };
         fileReader.readAsDataURL(blob);
