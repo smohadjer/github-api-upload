@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm run build -- --watch=forever & http-server",
-    "build": "esbuild ts/*.ts --outdir=js"
+    "build": "esbuild public/ts/*.ts --outdir=public/js"
   },
   "author": "",
   "license": "ISC",
