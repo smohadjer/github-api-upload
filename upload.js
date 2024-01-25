@@ -1,13 +1,12 @@
 /* Demo for saving a base64 file to GitHub using GitHub's SDK and Node.js */
+/* Run in cli using: node upload */
 
-import { Octokit, App } from "octokit";
+import { Octokit } from "octokit";
 import dotenv from 'dotenv';
 import { base64Image } from './base64image.js';
 
 dotenv.config();
 
-// Octokit.js
-// https://github.com/octokit/core.js#readme
 const octokit = new Octokit({
   auth: process.env.Token
 });
@@ -16,7 +15,7 @@ await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
   owner: 'smohadjer',
   repo: 's3',
   path: 'test.jpg',
-  message: 'a new commit message',
+  message: 'New commit via GitHub API',
   committer: {
     name: 'Monalisa Octocat',
     email: 'octocat@github.com'

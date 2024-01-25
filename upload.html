@@ -2,132 +2,33 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>HTML5</title>
+        <title>Upload file to GitHub</title>
         <meta name="description" content="" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <script>
-          // upload image to github
-          function uploadImage(data) {
-            return fetch(
-              `https://api.github.com/repos/${data.owner}/${data.repo}/contents/${data.name}`,
-              {
-                method: "PUT",
-                headers: {
-                  Accept: "application/vnd.github+json",
-                  Authorization: `Bearer ${data.token}`
-                },
-                body: JSON.stringify({
-                  message: "upload image from api",
-                  content: data.content
-                })
-              }
-            ).then((res) => res.json());
+        <style>
+          .preview img {
+            width: 100px;
+            margin: 1em 0;
           }
-
-          function insertImage(src) {
-            const newImage = document.createElement("img");
-            newImage.src = src;
-            document.querySelector(".img").innerHTML = newImage.outerHTML;
-          }
-
-          function getRandomName(type) {
-            if (type.endsWith("png")) {
-              return [Date.now(), ".png"].join("");
-            }
-            return [Date.now(), ".jpeg"].join("");
-          }
-
-          function blobToBase64(blob) {
-            return new Promise((resolve) => {
-              const fileReader = new FileReader();
-              fileReader.onload = () => {
-                const srcData = fileReader.result;
-                resolve(srcData);
-              };
-              fileReader.readAsDataURL(blob);
-            });
-          }
-
-          function handleImageChange(callback) {
-            const $file = document.querySelector(".local");
-            $file.addEventListener("change", (event) => {
-              const selectedfile = event.target.files;
-              if (selectedfile.length > 0) {
-                const [imageFile] = selectedfile;
-                blobToBase64(imageFile).then((srcData) => {
-                  insertImage(srcData);
-                  callback &&
-                    callback({
-                      content: srcData,
-                      name: imageFile.name,
-                      type: imageFile.type
-                    });
-                });
-              }
-            });
-          }
-
-          document.addEventListener('DOMContentLoaded', (event) => {
-            console.log('Hello World');
-
-            const $form = document.querySelector(".form");
-            let image = null;
-
-            $form.addEventListener("submit", (event) => {
-              event.preventDefault();
-              if (!image) {
-                alert('Image is empty, please select or paste');
-                return;
-              }
-              const formData = new FormData($form);
-              const data = {}
-              for (let [key, value] of formData.entries()) {
-                data[key] = value;
-              }
-
-              uploadImage({
-                ...data,
-                ...image
-              }).then(res => {
-                let message = '';
-                if (res.message) {
-                  message = res.message
-                } else {
-                  message = `upload success: <a href="${res.content.download_url}">${res.content.download_url}</a>`
-                }
-                console.log('res', res);
-                document.querySelector('.log').innerHTML = message;
-              })
-            });
-
-            handleImageChange(imageInfo => {
-              image = {
-                ...imageInfo,
-                content: imageInfo.content.split('base64,')[1]
-              };
-            });
-          });
-        </script>
+        </style>
+        <script src="js/upload-file-to-github.js"></script>
     </head>
     <body>
         <main>
-          <h1>File upload to GitHub via GitHub API</h1>
-          <p>Demo based on <a href="https://codepen.io/bitbug/pen/abjwmxz">https://codepen.io/bitbug/pen/abjwmxz</a></p>
-
-          <form class="form">
-            <p><label>GitHub Access Token: <input required name="token" placeholder="ghp_xxxxxxx" /></label></p>
-            <p><label>GitHub Repo Owner: <input required name="owner" placeholder="" /></label></p>
-            <p><label>GitHub Repo Name: <input required name="repo" placeholder="" /></label></p>
-            <p>
-              <button type="submit"> upload </button>
-              <div class="log"></div>
-            </p>
+          <h1>Upload image to GitHub via GitHub API</h1>
+          <p>This is a prototype to show how to upload and save an image to a GitHub repository directly from browser and without using any backend code. Demo is based on <a href="https://codepen.io/bitbug/pen/abjwmxz">https://codepen.io/bitbug/pen/abjwmxz</a></p>
+          <form enctype="multipart/form-data">
+            <fieldset>
+              <legend>Upload to GitHub</legend>
+              <input required type="file" accept="image/*" name="myfile">
+              <div class="preview"></div>
+              <p><label>GitHub Access Token: <input required name="token" placeholder="ghp_xxxxxxx" value="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"></label></p>
+              <p><label>GitHub Repo Owner: <input required name="owner" placeholder="" /></label></p>
+              <p><label>GitHub Repo Name: <input required name="repo" placeholder="" /></label></p>
+              <p><button>Upload</button></p>
+            </fieldset>
           </form>
-          <div class="container">
-            <h3>Select a file to upload to GitHub</h3>
-            <input type="file" accept="image/*" class="local" />
-            <div class="img"></div>
-          </div>
+          <div class="log"></div>
         </main>
     </body>
 </html>
