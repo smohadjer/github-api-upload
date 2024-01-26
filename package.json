@@ -13,11 +13,11 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.0.3",
-    "esbuild": "^0.19.12",
     "octokit": "^3.1.2",
     "@octokit/rest": "^20.0.2"
   },
   "devDependencies": {
+    "esbuild": "^0.19.12",
     "http-server": "^14.1.1"
   }
 }
