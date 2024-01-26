@@ -1,8 +1,3 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const form =  document.querySelector('form');
-    form!.addEventListener('submit', onSubmit);
-});
-
 interface Data {
     owner: string;
     repo: string;
@@ -11,12 +6,18 @@ interface Data {
     content: string;
 };
 
+document.addEventListener('DOMContentLoaded', () => {
+    const form =  document.querySelector('form');
+    form!.addEventListener('submit', onSubmit);
+});
+
 async function onSubmit(event: Event) {
     event.preventDefault();
 
     const form = event.target as HTMLFormElement;
     const formData = new FormData(form);
     const file = formData.get('myfile') as File;
+    console.log(typeof file);
     const srcData: string = await blobToBase64(file);
     const data: Data = {
         owner: formData.get('owner') as string,

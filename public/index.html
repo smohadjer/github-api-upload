@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Save text to GitHub</title>
+        <meta name="description" content="" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+    </head>
+    <body>
+        <main>
+          <h1>Save text to GitHub via GitHub API</h1>
+          <p>If file exists, it will be updated.</p>
+          <form method="POST" action="/api/github">
+            <fieldset>
+              <div>
+                <label>File name:</label>
+                <input name="filename" type="text">
+              </div>
+              <div>
+                <label>Add text</label>
+                <textarea required name="text"></textarea>
+              </div>
+              <button>Upload</button>
+            </fieldset>
+          </form>
+          <div class="log"></div>
+        </main>
+    </body>
+</html>
